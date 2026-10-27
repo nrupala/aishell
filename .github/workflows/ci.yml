@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main, release-prep]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  vet-test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./...
+      - name: Build (all release targets)
+        run: |
+          GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o ai-shell.exe .
+          GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o ai-shell-linux .
+          GOOS=darwin GOARCH=arm64 go build -ldflags="-s -w" -o ai-shell-mac .
