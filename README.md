@@ -1,162 +1,71 @@
-\# AI-Native Cross-Platform Shell Interface
+# aishell — an AI-native shell that never runs anything behind your back
 
+Copyright © 2026 2351485 ALBERTA INC.
 
+Type what you want in plain language. aishell turns it into a clean command for your operating system, shows it to you, and runs it **only if you say yes**.
 
-A lightweight, zero-dependency command-line interface wrapper written in Go. The application intercepts natural language user inputs, streams local inference via a background `llama.cpp` process, extracts clean system commands optimized for the host Operating System, and executes them following manual user confirmation via a security sandbox gate.
+Inference is fully local: aishell drives a `llama-cli` (llama.cpp) process with a small local model on your own machine. No account, no cloud, no telemetry. The confirmation gate is the product: destructive patterns are blocked outright, file-writing commands are rerouted to your editor, and nothing executes silently — ever.
 
+## How it works
 
+1. You type an intent — `find every log file over 100 MB`.
+2. A local Qwen2.5-Coder 3B model (via `llama-cli`) translates it into one command block for your shell (PowerShell, bash, or zsh).
+3. aishell extracts the command and screens it:
+   - **Destructive blacklist** (`rm -rf`, `mkfs`, `dd if=`, `Format-Volume`, …) → blocked, full stop.
+   - **Write/mutation operators** (`>`, `>>`, `Out-File`, `Set-Content`, `tee`, …) → rerouted: the file opens in your native editor instead.
+4. The surviving command is printed, and you decide: `Execute command on host system? [y/N]`
+5. On Linux it then runs inside a `systemd-run` sandbox (`PrivateDevices`, read-only home, strict system protection); on macOS inside `sandbox-exec` with file writes denied. On Windows it runs in PowerShell after your confirmation — the gate there is the confirmation itself.
+6. On exit, aishell offers to archive a session log **locally** — only if you explicitly answer yes. Command-frequency counts (the "watchdog", which suggests aliases for commands you run often) are kept locally too. Nothing ever leaves your machine; see [PRIVACY.md](PRIVACY.md).
 
-\---
+Built-in extras: `help`, `aliases` (pre-baked shortcuts like `sysinfo`, `netstat`, `diskuse`), `exit`.
 
+## Requirements
 
+- Go 1.21 or newer (to build)
+- `llama-cli` from [llama.cpp](https://github.com/ggml-org/llama.cpp), in your PATH (or in the project folder — see `main.go`)
+- The model file, in `./models/` with exactly this name:
+  `qwen2.5-coder-3b-instruct-q4_k_m.gguf`
+  (Qwen2.5-Coder-3B-Instruct, Q4_K_M — the setup scripts fetch it from Hugging Face under the right name.)
 
-\## 🏗️ Quick Start Architecture Setup
+Zero Go dependencies. One module, six source files, a test suite.
 
+## Quick start
 
-
-\### 1. Project Folder Structure
-
-Ensure your workspace is structured as follows before running the compilation scripts:
-
-```text
-
-.
-
-├── main.go               # Core Go orchestrator
-
-├── Makefile              # Unix/Linux/macOS build pipeline
-
-├── build.bat             # Windows native build pipeline
-
-└── models/               # Target local GGUF model repository
-
-&#x20;   └── qwen2.5-coder-3b-instruct-q4\_k\_m.gguf (To be downloaded)
-
+```bash
+# Linux / macOS
+./setup.sh     # checks llama-cli, downloads the model
+make           # builds Windows + Linux + macOS binaries
+./ai-shell-linux        # (or ./ai-shell-mac)
+go test ./...           # 10 tests: parsing, sandbox screening, streaming, prompts
 ```
 
-
-
-\### 2. Download the Reasoning Model
-
-To enable lightweight execution across standard system hardware and mobile devices, we use the optimized `Qwen2.5-Coder` model quantization series.
-
-
-
-1\. Navigate into your local models directory:
-
-&#x20;  ```bash
-
-&#x20;  cd models
-
-&#x20;  ```
-
-2\. Download the recommended model binary footprint using `curl` or your browser:
-
-&#x20;  ```bash
-
-&#x20;  curl -L -O https://huggingface.co
-
-&#x20;  ```
-
-
-
-\---
-
-
-
-\## 🛠️ Compilation \& Execution
-
-
-
-Build binaries automatically using the compiled script engine matching your development computer platform:
-
-
-
-\*   \*\*On macOS / Linux Environments\*\*:
-
-&#x20;   ```bash
-
-&#x20;   make
-
-&#x20;   ./ai-shell
-
-&#x20;   ```
-
-\*   \*\*On Windows OS Environments\*\*:
-
-&#x20;   ```powershell
-
-&#x20;   .\\build.bat
-
-&#x20;   .\\ai-shell.exe
-
-&#x20;   ```
-
-
-
-\---
-
-
-
-\## ⚙️ Configuring the `llama-cli` Dependency Path
-
-
-
-The Go orchestrator communicates directly with `llama.cpp` by calling the `llama-cli` binary inside its execution path loop. If `llama-cli` is not globally mapped, your shell will throw an execution path runtime error.
-
-
-
-Choose the mapping method that best matches your deployment context below:
-
-
-
-\### Option A: System Path Mapping (Recommended)
-
-Place your pre-compiled `llama-cli` binary directly into one of your operating system's global system path variables so it can be invoked safely from anywhere on the computer:
-
-
-
-\*   \*\*Linux / macOS\*\*: Move the binary file to `/usr/local/bin/` or `\~/.local/bin/`.
-
-\*   \*\*Windows\*\*: Move the binary file to `C:\\Windows\\System32\\` or add its folder destination to your \*\*Environment Variables\*\* system paths setup dashboard.
-
-
-
-\### Option B: Local Relative Path Fallback
-
-If you prefer to lock your runtime dependencies strictly within this directory boundary, place the compiled `llama-cli` binary file directly inside your root workspace folder. 
-
-
-
-Then, update the string array declaration inside your `main.go` source file to execute using an explicit local path structure:
-
-
-
-```go
-
-// Inside main.go -> runInference() function:
-
-cmd := exec.Command("./llama-cli", // Prepended with './' for direct directory target lookup
-
-&#x20;   "-m", "models/qwen2.5-coder-3b-instruct-q4\_k\_m.gguf",
-
-&#x20;   // ... remaining flags
-
-)
-
+```powershell
+# Windows
+.\setup.bat
+.\build.bat
+.\ai-shell.exe
 ```
 
+Prebuilt binaries for Windows, Linux (amd64), and macOS (Apple Silicon) are attached to each release — built from the tagged source, with SHA-256 sums in the release notes.
 
+## Security model — read this before you trust it
 
-\---
+aishell is a *gate*, not a guarantee. The blacklist and mutation screening are plain string checks in `execution.go` — readable, auditable, and bypassable by a sufficiently creative generated command. That is exactly why the final step is a human one: **you read the command and you press y.** Do not remove the confirmation prompt. If a command looks wrong, the correct move is `N` — aishell logs the decline and moves on.
 
+Known limits, stated plainly:
 
+- Windows execution has no OS sandbox — confirmation is the only gate there.
+- The screening lists are finite. A novel destructive phrasing can pass the screen; it cannot pass you unless you approve it.
 
-\## 🔒 Security \& Sandbox Framework Rules
+## Privacy
 
-\*   \*\*Zero-Direct-Action\*\*: The AI shell is explicitly forbidden from running destructive modifications natively.
+Runs fully local. No telemetry, no analytics, no account. Session history and watchdog counts are stored only on your machine, and session history is archived only on your explicit yes at exit. Full statement: [PRIVACY.md](PRIVACY.md).
 
-\*   \*\*Native App Relaying\*\*: Intent files that require modification or creation actions are structured by the model to safely execute inside a system terminal fallback, launching native applications like \*\*Notepad\*\*, \*\*Vim\*\*, or \*\*TextEdit\*\*.
+## Licence
 
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
+aishell is free. If it saved you time, you can support its maintainer via the links in the Funding panel — voluntary, never required.
 
+---
+A 2351485 ALBERTA INC. tool, built under AIMLDS.
