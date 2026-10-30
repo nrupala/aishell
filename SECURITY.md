@@ -4,7 +4,7 @@ Copyright © 2026 2351485 ALBERTA INC.
 
 ## The model, in one paragraph
 
-aishell generates shell commands with a local model and executes them only after the user confirms at a `[y/N]` prompt. Destructive patterns are blacklisted, write/mutation commands are rerouted to a text editor, and on Linux/macOS confirmed commands run inside an OS sandbox. The screening is string-based and deliberately simple — the human confirmation is the final gate, and the README says so plainly. A bypass of the screening that still requires user confirmation is a hardening opportunity; a way to execute *without* confirmation is a critical vulnerability.
+aishell generates shell commands with a local model and executes them only after the user confirms at a `[y/N]` prompt. Destructive patterns are blacklisted, write/mutation commands are rerouted to a text editor, and confirmed commands run inside an OS sandbox on macOS (`sandbox-exec`, file writes denied); on Linux they run in a `systemd-run` scope and on Windows directly in PowerShell — on those two, the gate is the confirmation itself. The screening is string-based and deliberately simple — the human confirmation is the final gate, and the README says so plainly. A bypass of the screening that still requires user confirmation is a hardening opportunity; a way to execute *without* confirmation is a critical vulnerability.
 
 ## Reporting a vulnerability
 

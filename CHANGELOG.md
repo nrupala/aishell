@@ -1,5 +1,14 @@
 # Changelog — aishell
 
+## 1.0.1 — end-to-end proof fixes (2026-10-30, Aetheris proof)
+
+The first full end-to-end run (real Qwen2.5-Coder-3B model + llama-cli staged on the Aetheris box, six scripted sessions) found three defects that unit tests and static review had missed. All three are fixed here; the proof was then re-run green.
+
+- **Inference hung forever with current llama.cpp.** `llama-cli` now defaults to conversation mode — it generated, then waited for a next chat turn, and aishell blocked on the capture pipe indefinitely (one session produced 396 MB of spinner output). `runInference` now passes `-no-cnv --single-turn --no-display-prompt`, so llama-cli generates once and exits (observed: ~9 s, clean exit).
+- **Prompt echo could have poisoned parsing.** Current llama-cli echoes the prompt — including the system prompt's empty command template — into its output. `extractCommandBlock` now collects all fenced blocks, filters the template placeholder, and takes the last real block (two new tests cover this).
+- **Linux execution never ran.** The Linux sandbox invocation passed `PrivateDevices` / `ProtectHome` / `ProtectSystem` to a `systemd-run --scope` unit, which rejects all of them ("Unknown assignment", systemd 255) — every approved command failed. The service-unit alternative was tested and rejected on evidence (status 218 with PrivateDevices in a user manager; ProtectHome did not actually block a home write). Linux now runs the confirmed command in a bare `systemd-run --scope`, and the docs no longer claim a Linux OS sandbox: on Linux the screening + confirmation gate is the control.
+- Session evidence (transcripts): benign approve → executes and prints output; benign decline → nothing runs; destructive intent → model refuses, no dangerous command produced; write intent → rerouted to editor, no file created; builtins + alias interception work; session history archives only on explicit yes.
+
 ## Unreleased — free-release prep (release-prep branch)
 
 Prepared 2026-10-26 by Wright (2351485 ALBERTA INC.). Not published.

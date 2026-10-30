@@ -33,6 +33,15 @@ func runInference(prompt string) (string, error) {
 		"-n", strconv.Itoa(maxTokens),
 		"--temp", strconv.FormatFloat(temperature, 'f', -1, 64),
 		"--log-disable",
+		// Current llama.cpp builds default llama-cli to conversation
+		// mode: it prints its UI, generates, then waits for the next
+		// chat turn instead of exiting — which hung the capture pipe
+		// forever (found in the 2026-10-30 Aetheris end-to-end proof,
+		// session s1: 396 MB of spinner output, no exit). One-shot
+		// flags make it generate once and exit, as this code expects.
+		"-no-cnv",
+		"--single-turn",
+		"--no-display-prompt",
 		"-p", prompt,
 	)
 	cmd.Stderr = os.Stderr

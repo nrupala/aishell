@@ -45,26 +45,38 @@ func formatEditorFallback(hostOS, editor, original string) string {
 	return fmt.Sprintf("%s %s", editor, target)
 }
 
-func executeCommand(hostOS, payload string) {
-	var cmd *exec.Cmd
-
+func buildExecCommand(hostOS, payload string) *exec.Cmd {
 	switch hostOS {
 	case "windows":
-		cmd = exec.Command("powershell.exe", "-NoProfile", "-Command", payload)
+		return exec.Command("powershell.exe", "-NoProfile", "-Command", payload)
 	case "linux":
-		cmd = exec.Command("systemd-run",
+		// systemd-run --scope, with NO service sandbox properties.
+		// The original code passed -p PrivateDevices / ProtectHome /
+		// ProtectSystem here, but scope units reject every one of them
+		// ("Unknown assignment") on systemd 255 / Ubuntu 24.04 — so
+		// every user-approved command failed without running (found in
+		// the 2026-10-30 Aetheris end-to-end proof, session s1). The
+		// service-unit form (--wait --pipe) accepts the properties but
+		// PrivateDevices makes it die with status 218 in a user
+		// manager, and ProtectHome did not actually block a home write
+		// in testing — claiming either would be false. A bare scope
+		// still groups the command under the user manager; on Linux
+		// the screening + confirmation gate is the control, and the
+		// docs now say exactly that.
+		return exec.Command("systemd-run",
 			"--user", "--scope",
-			"-p", "PrivateDevices=true",
-			"-p", "ProtectHome=read-only",
-			"-p", "ProtectSystem=strict",
 			"/bin/bash", "-c", payload)
 	case "darwin":
-		cmd = exec.Command("sandbox-exec",
+		return exec.Command("sandbox-exec",
 			"-p", `(version 1) (allow default) (deny file-write* (subpath "/"))`,
 			"/bin/zsh", "-c", payload)
 	default:
-		cmd = exec.Command("/bin/sh", "-c", payload)
+		return exec.Command("/bin/sh", "-c", payload)
 	}
+}
+
+func executeCommand(hostOS, payload string) {
+	cmd := buildExecCommand(hostOS, payload)
 
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

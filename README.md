@@ -14,7 +14,7 @@ Inference is fully local: aishell drives a `llama-cli` (llama.cpp) process with 
    - **Destructive blacklist** (`rm -rf`, `mkfs`, `dd if=`, `Format-Volume`, …) → blocked, full stop.
    - **Write/mutation operators** (`>`, `>>`, `Out-File`, `Set-Content`, `tee`, …) → rerouted: the file opens in your native editor instead.
 4. The surviving command is printed, and you decide: `Execute command on host system? [y/N]`
-5. On Linux it then runs inside a `systemd-run` sandbox (`PrivateDevices`, read-only home, strict system protection); on macOS inside `sandbox-exec` with file writes denied. On Windows it runs in PowerShell after your confirmation — the gate there is the confirmation itself.
+5. On macOS it then runs inside `sandbox-exec` with file writes denied. On Linux it runs in a `systemd-run` scope (process grouping under your user manager — no extra OS sandbox in this version; an earlier design claimed systemd sandbox properties that scope units in fact reject, so every approved command failed — that claim was removed, see CHANGELOG). On Windows it runs in PowerShell after your confirmation. On Linux and Windows, the gate is the screening plus your confirmation.
 6. On exit, aishell offers to archive a session log **locally** — only if you explicitly answer yes. Command-frequency counts (the "watchdog", which suggests aliases for commands you run often) are kept locally too. Nothing ever leaves your machine; see [PRIVACY.md](PRIVACY.md).
 
 Built-in extras: `help`, `aliases` (pre-baked shortcuts like `sysinfo`, `netstat`, `diskuse`), `exit`.
