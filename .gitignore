@@ -1,0 +1,19 @@
+# Local model files (fetched by setup scripts, never committed)
+models/
+
+# Locally built binaries (release binaries are built from tagged source)
+/ai-shell
+/ai-shell.exe
+/ai-shell-linux
+/ai-shell-mac
+
+# Local runtime data
+ai_shell/
+watchdog_metrics.json
+
+# Secrets / env (aishell needs none — keep it that way)
+.env
+.env.*
+
+# Tooling output
+.release-gate/

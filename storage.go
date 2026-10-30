@@ -145,7 +145,9 @@ func flushHistory(reader *bufio.Reader, hostOS string) {
 
 	fmt.Print("Archive session history before closing? [y/N]: ")
 	choice := readChoice(reader)
-	if choice != "y" && choice != "yes" && choice != "" {
+	if choice != "y" && choice != "yes" {
+		// [y/N] means No is the default: anything except an explicit
+		// yes — including just pressing Enter — purges the history.
 		fmt.Println("Session history purged.")
 		return
 	}

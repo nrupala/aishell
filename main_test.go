@@ -100,3 +100,37 @@ func TestStreamInferenceTerminatesAcrossChunkEdges(t *testing.T) {
 		t.Fatalf("marker split across writes not handled: %q", cap)
 	}
 }
+
+func TestExtractCommandBlockSkipsEchoedTemplate(t *testing.T) {
+	// Simulates a current llama-cli stream: the system prompt is echoed
+	// (including its empty template block) before the model generates.
+	out := "echoed prompt\n```cmd\n[THE EXACT COMMAND LINE PAYLOAD TO EXECUTE]\n```\n" +
+		thinkingToken + "\nreason\n" + responseToken + "\n```cmd\nls -la\n```\n"
+	got := extractCommandBlock(out)
+	if got != "ls -la" {
+		t.Fatalf("got %q want %q", got, "ls -la")
+	}
+}
+
+func TestExtractCommandBlockTakesLastBlock(t *testing.T) {
+	out := "```bash\necho first\n```\nnoise\n```bash\necho second\n```\n"
+	if got := extractCommandBlock(out); got != "echo second" {
+		t.Fatalf("got %q want %q", got, "echo second")
+	}
+}
+
+func TestBuildExecCommandLinuxScopeHasNoServiceProps(t *testing.T) {
+	cmd := buildExecCommand("linux", "ls")
+	joined := strings.Join(cmd.Args, " ")
+	if !strings.Contains(joined, "systemd-run --user --scope") {
+		t.Fatalf("linux exec should use a systemd-run scope, got %q", joined)
+	}
+	for _, prop := range []string{"PrivateDevices", "ProtectHome", "ProtectSystem"} {
+		if strings.Contains(joined, prop) {
+			t.Fatalf("scope units reject %s (systemd 255 verified); must not be passed: %q", prop, joined)
+		}
+	}
+	if cmd.Args[len(cmd.Args)-1] != "ls" {
+		t.Fatalf("payload should be the last arg, got %q", joined)
+	}
+}

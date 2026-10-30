@@ -1,0 +1,8 @@
+aishell
+Copyright © 2026 2351485 ALBERTA INC.
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+aishell uses llama.cpp (via the external llama-cli binary, not bundled) and the
+Qwen2.5-Coder model family (downloaded separately by the setup scripts); those
+components remain under their own licences and are not covered by this notice.
