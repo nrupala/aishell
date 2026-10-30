@@ -1,0 +1,4 @@
+391107e0f8268ec129e1f44f96fec7a98cb8e23bac3f23c66f7387305a981bd5  ai-shell.exe
+23eaf419c175cfad43dd791cbede9ff2c6c72c5357254e160294af74f86b6138  ai-shell-linux
+f023a55b1b8545b1a0f12b6dbd39a97b0367b528d7decb1885ef3759d3d345c3  ai-shell-linux-arm64
+9fbd52af9aebfc0032a57d64ae045ba728cbd67eb6da82e3ec781ed1dede21da  ai-shell-mac

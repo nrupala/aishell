@@ -46,7 +46,7 @@ go test ./...           # 10 tests: parsing, sandbox screening, streaming, promp
 .\ai-shell.exe
 ```
 
-Prebuilt binaries for Windows, Linux (amd64), and macOS (Apple Silicon) are attached to each release — built from the tagged source, with SHA-256 sums in the release notes.
+Prebuilt binaries for Windows, Linux (amd64 and arm64), and macOS (Apple Silicon) live in [`dist/`](dist/) in this repository — built from the tagged source, with SHA-256 sums in `dist/SHA256SUMS.txt` and in the release notes. The Linux arm64 build is the exact binary exercised end-to-end in the Aetheris proof (see CHANGELOG 1.0.1).
 
 ## Security model — read this before you trust it
 
