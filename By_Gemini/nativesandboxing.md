@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 Relying on host-native OS isolation is far more secure, performs with zero overhead, and cuts out the massive security attack surface that container daemons introduce. \[1, 2, 3] 
 
 By leveraging native kernel features, you achieve real sandboxing with zero software bloat. \[4, 5] 
