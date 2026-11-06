@@ -1,4 +1,5 @@
 name: macOS E2E Proof
+# Distilled into the fleet's reusable kit: nrupala/platform-ci-scaffolding (templates + reusable workflows live there).
 
 # Manual + branch-push proof that aishell actually runs on a real
 # Apple Silicon Mac (GitHub-hosted macos-15 runner): builds the binary

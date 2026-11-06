@@ -1,5 +1,13 @@
 # Changelog — aishell
 
+## 1.0.4 — one-shot behaviour lives in aishell now (2026-11-05, supersedes 1.0.3)
+
+1.0.3's `--single-turn` worked on every build checked — but it is the same class of dependency that broke 1.0.1 and 1.0.2: a conversation flag upstream can rename or remove at will. Per the owner's direction, the one-shot behaviour now lives in aishell's own source, which upstream cannot remove.
+
+- `llamaArgs` passes only the stable core (`-m`, `-c`, `-n`, `--temp`, `--log-disable`, `-p`) — unchanged in meaning since llama.cpp's earliest builds. No conversation or display flags at all.
+- `runInference` manages the llama-cli process directly: it terminates the process the moment a complete response block has been captured (whatever the build's conversation behaviour — chat loop, extra generation, spinner), and an overall 10-minute timeout bounds a wedged run, the failure mode behind the 2026-10-30 396 MB spinner hang.
+- The argument test now forbids the whole conversation/display flag class, and two new tests drive a fake conversation-mode llama-cli that would wait forever, proving aishell terminates it on completion and on timeout.
+
 ## 1.0.3 — the one-shot flag that survives (2026-11-05, certification proofs, supersedes 1.0.2)
 
 The 1.0.2 fix was itself overtaken within hours: the newest llama.cpp builds (Homebrew on macOS, the MSVC dev build on Windows) removed the conversation toggle entirely, so `--no-conversation` is now rejected the same way `-no-cnv` was. Both certification proofs hit `error: invalid argument: --no-conversation` on every inference.

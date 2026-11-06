@@ -2,8 +2,12 @@ package main
 
 import (
 	"bytes"
+	"os"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestExtractCommandBlockFenceWithLanguage(t *testing.T) {
@@ -33,7 +37,7 @@ func TestExtractCommandBlockNoFence(t *testing.T) {
 func TestStreamInferenceCapturesFullOutput(t *testing.T) {
 	src := " pre " + thinkingToken + "\nreason\n" + responseToken + "\n```bash\necho hi\n```\n"
 	r := strings.NewReader(src)
-	cap := streamInference(r, thinkingToken, responseToken)
+	cap := streamInference(r, thinkingToken, responseToken, nil)
 	if !strings.Contains(cap, "reason") {
 		t.Fatalf("missing reasoning in captured output: %q", cap)
 	}
@@ -95,7 +99,7 @@ func TestStreamInferenceTerminatesAcrossChunkEdges(t *testing.T) {
 	buf.WriteString(responseToken[6:])
 	buf.WriteString("\n```bash\nls\n```\n")
 	r := &buf
-	cap := streamInference(r, thinkingToken, responseToken)
+	cap := streamInference(r, thinkingToken, responseToken, nil)
 	if !strings.Contains(cap, "ls") {
 		t.Fatalf("marker split across writes not handled: %q", cap)
 	}
@@ -135,20 +139,77 @@ func TestBuildExecCommandLinuxScopeHasNoServiceProps(t *testing.T) {
 	}
 }
 
-func TestLlamaArgsUseStableOneShotFlags(t *testing.T) {
+func TestLlamaArgsUseOnlyStableCoreFlags(t *testing.T) {
 	args := llamaArgs("hello")
 	joined := strings.Join(args, " ")
-	for _, want := range []string{"--single-turn", "--no-display-prompt"} {
+	for _, want := range []string{"-m", "-c", "-n", "--temp", "-p"} {
 		if !strings.Contains(joined, want) {
-			t.Fatalf("llama args missing %s: %q", want, joined)
+			t.Fatalf("llama args missing stable core flag %s: %q", want, joined)
 		}
 	}
-	for _, bad := range []string{"-no-cnv", "--no-conversation", "-cnv", "--conversation", " -st "} {
+	// No conversation or display flags at all: upstream removes and
+	// renames that surface (both conversation toggles died within a
+	// year, breaking v1.0.1 and v1.0.2 in production). One-shot
+	// behaviour is enforced by runInference's process control, in
+	// this codebase, where upstream cannot remove it.
+	for _, bad := range []string{"-no-cnv", "--no-conversation", "-cnv", "--conversation",
+		"--single-turn", " -st ", "--no-display-prompt", "--display-prompt"} {
 		if strings.Contains(joined, bad) {
-			t.Fatalf("llama args must not use removed short alias %q: %q", bad, joined)
+			t.Fatalf("llama args must not use conversation/display flag %q: %q", bad, joined)
 		}
 	}
 	if args[len(args)-1] != "hello" {
 		t.Fatalf("prompt should be the last arg, got %q", joined)
+	}
+}
+
+// writeFakeLlama installs a fake llama-cli script in a temp dir and
+// puts it first in PATH. The script ignores its arguments, emits
+// body, then sleeps — standing in for a conversation-mode build
+// that generates once and then waits forever for the next turn.
+func writeFakeLlama(t *testing.T, body string) {
+	t.Helper()
+	if runtime.GOOS == "windows" {
+		t.Skip("fake llama-cli is a POSIX shell script")
+	}
+	dir := t.TempDir()
+	// The sleep's descriptors are redirected: an orphaned sleep that
+	// inherits the test binary's stderr would hold go test's output
+	// pipe open and stall the suite for the full 60s.
+	script := "#!/bin/sh\nprintf '%s' '" + body + "'\nsleep 60 >/dev/null 2>&1\n"
+	if err := os.WriteFile(filepath.Join(dir, "llama-cli"), []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("PATH", dir+string(os.PathListSeparator)+os.Getenv("PATH"))
+}
+
+func TestRunInferenceTerminatesAfterCompleteBlock(t *testing.T) {
+	writeFakeLlama(t, " thinking\nreason\n response\n```cmd\nls\n```\n")
+	old := inferenceTimeout
+	inferenceTimeout = 30 * time.Second
+	defer func() { inferenceTimeout = old }()
+
+	start := time.Now()
+	out, err := runInference("list files")
+	if err != nil {
+		t.Fatalf("runInference: %v", err)
+	}
+	if elapsed := time.Since(start); elapsed > 10*time.Second {
+		t.Fatalf("inference did not terminate on completion (took %s) — the fake sleeps 60s", elapsed)
+	}
+	if got := extractCommandBlock(out); got != "ls" {
+		t.Fatalf("got block %q from output %q", got, out)
+	}
+}
+
+func TestRunInferenceTimesOut(t *testing.T) {
+	writeFakeLlama(t, "")
+	old := inferenceTimeout
+	inferenceTimeout = time.Second
+	defer func() { inferenceTimeout = old }()
+
+	_, err := runInference("list files")
+	if err == nil || !strings.Contains(err.Error(), "timed out") {
+		t.Fatalf("expected timeout error, got %v", err)
 	}
 }
