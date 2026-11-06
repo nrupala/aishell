@@ -134,3 +134,21 @@ func TestBuildExecCommandLinuxScopeHasNoServiceProps(t *testing.T) {
 		t.Fatalf("payload should be the last arg, got %q", joined)
 	}
 }
+
+func TestLlamaArgsUseLongFormOneShotFlags(t *testing.T) {
+	args := llamaArgs("hello")
+	joined := strings.Join(args, " ")
+	for _, want := range []string{"--no-conversation", "--single-turn", "--no-display-prompt"} {
+		if !strings.Contains(joined, want) {
+			t.Fatalf("llama args missing %s: %q", want, joined)
+		}
+	}
+	for _, bad := range []string{"-no-cnv", "-cnv", " -st "} {
+		if strings.Contains(joined, bad) {
+			t.Fatalf("llama args must not use removed short alias %q: %q", bad, joined)
+		}
+	}
+	if args[len(args)-1] != "hello" {
+		t.Fatalf("prompt should be the last arg, got %q", joined)
+	}
+}

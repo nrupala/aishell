@@ -1,5 +1,13 @@
 # Changelog — aishell
 
+## 1.0.2 — cross-platform llama-cli flag fix (2026-11-05, certification proofs)
+
+Found by the macOS CI proof (a real Apple Silicon runner, Homebrew llama.cpp): newer llama.cpp builds removed the short `-no-cnv` alias, so every inference failed with `error: invalid argument: -no-cnv` on a current `llama-cli`. The Linux proof build (bb4caa7) still accepted the short form, which is why this only surfaced on macOS.
+
+- Inference now uses the long flag forms only (`--no-conversation --single-turn --no-display-prompt`), which both the older proof build and the newest builds accept. A unit test pins the argument list so the short aliases cannot creep back.
+- The banner, OS detection, and session flow on macOS were unaffected — only the inference invocation was rejected; failure was graceful (`[Inference Error]`, clean exit).
+- README: the Quick start now leads with the prebuilt-binary route (an independent cold-user walk found the build-only ordering left binary users without an end-to-end path), and the stale test count is removed.
+
 ## 1.0.1 — end-to-end proof fixes (2026-10-30, Aetheris proof)
 
 The first full end-to-end run (real Qwen2.5-Coder-3B model + llama-cli staged on the Aetheris box, six scripted sessions) found three defects that unit tests and static review had missed. All three are fixed here; the proof was then re-run green.
