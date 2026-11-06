@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 name: macOS E2E Proof
 # Distilled into the fleet's reusable kit: nrupala/platform-ci-scaffolding (templates + reusable workflows live there).
 
