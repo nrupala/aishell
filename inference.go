@@ -26,8 +26,8 @@ func buildSystemPrompt(hostOS, editor, intent string) string {
 	return sb.String()
 }
 
-func runInference(prompt string) (string, error) {
-	cmd := exec.Command("llama-cli",
+func llamaArgs(prompt string) []string {
+	return []string{
 		"-m", modelPath,
 		"-c", strconv.Itoa(contextWindow),
 		"-n", strconv.Itoa(maxTokens),
@@ -39,11 +39,22 @@ func runInference(prompt string) (string, error) {
 		// forever (found in the 2026-10-30 Aetheris end-to-end proof,
 		// session s1: 396 MB of spinner output, no exit). One-shot
 		// flags make it generate once and exit, as this code expects.
-		"-no-cnv",
+		//
+		// LONG flag forms only. The short alias "-no-cnv" was removed
+		// by newer llama.cpp builds: the 2026-11-05 macOS CI proof
+		// (Homebrew llama-cli) failed every inference with
+		// "error: invalid argument: -no-cnv", while the long forms
+		// are accepted by both the older Aetheris build (bb4caa7)
+		// and the newest builds.
+		"--no-conversation",
 		"--single-turn",
 		"--no-display-prompt",
 		"-p", prompt,
-	)
+	}
+}
+
+func runInference(prompt string) (string, error) {
+	cmd := exec.Command("llama-cli", llamaArgs(prompt)...)
 	cmd.Stderr = os.Stderr
 
 	pipe, err := cmd.StdoutPipe()

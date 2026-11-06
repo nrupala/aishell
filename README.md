@@ -31,12 +31,21 @@ Zero Go dependencies. One module, six source files, a test suite.
 
 ## Quick start
 
+**Just want the binary?** Download yours from [`dist/`](dist/) (check it against `dist/SHA256SUMS.txt`), put `llama-cli` in your PATH, then:
+
+```bash
+./setup.sh          # downloads the model into ./models (warns if llama-cli is missing)
+./ai-shell-linux    # or: ./ai-shell-linux-arm64, ./ai-shell-mac
+```
+
+**Building from source instead:**
+
 ```bash
 # Linux / macOS
 ./setup.sh     # checks llama-cli, downloads the model
 make           # builds Windows + Linux + macOS binaries
 ./ai-shell-linux        # (or ./ai-shell-mac)
-go test ./...           # 10 tests: parsing, sandbox screening, streaming, prompts
+go test ./...           # parsing, sandbox screening, streaming, prompts
 ```
 
 ```powershell
