@@ -40,13 +40,15 @@ func llamaArgs(prompt string) []string {
 		// session s1: 396 MB of spinner output, no exit). One-shot
 		// flags make it generate once and exit, as this code expects.
 		//
-		// LONG flag forms only. The short alias "-no-cnv" was removed
-		// by newer llama.cpp builds: the 2026-11-05 macOS CI proof
-		// (Homebrew llama-cli) failed every inference with
-		// "error: invalid argument: -no-cnv", while the long forms
-		// are accepted by both the older Aetheris build (bb4caa7)
-		// and the newest builds.
-		"--no-conversation",
+		// "--single-turn" is the ONLY conversation control used: it
+		// exists, with exit-after-one-turn semantics, in every build
+		// checked (Aetheris bb4caa7, ggml-org b8417, and the newest
+		// Homebrew / MSVC dev builds). The conversation toggles are
+		// deliberately NOT passed: "-no-cnv" was dropped first, then
+		// "--no-conversation" — the newest builds removed the toggle
+		// entirely, and passing either makes them reject the whole
+		// invocation ("error: invalid argument"), which the
+		// 2026-11-05 macOS and Windows certification proofs both hit.
 		"--single-turn",
 		"--no-display-prompt",
 		"-p", prompt,
