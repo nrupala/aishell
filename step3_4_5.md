@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 The absolute best model series for is the Qwen Coder family—specifically Qwen2.5-Coder-3B-Instruct (or Qwen2.5-Coder-7B-Instruct if the system has at least 8GB of VRAM). \[1] 
 
 Another exceptional alternative if you want deep multi-step reasoning is the DeepSeek-R1-Distill-Qwen-7B. \[2, 3] 
