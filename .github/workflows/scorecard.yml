@@ -1,11 +1,7 @@
 # Copyright (C) 2026 2351485 ALBERTA INC.
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
 #
-# OpenSSF Scorecard (https://scorecard.dev): runs on every push to main
-# and weekly, publishes results (publish_results: true) so the README
-# badge and api.scorecard.dev stay current, and uploads SARIF to the
-# code-scanning dashboard. House pattern: codetopo's scorecard.yml
-# (ossf/scorecard-action official starter, actions pinned by SHA).
+# SPDX-License-Identifier: Apache-2.0
 name: Scorecard analysis workflow
 on:
   push:
