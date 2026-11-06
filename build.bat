@@ -1,3 +1,7 @@
+REM SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+REM
+REM SPDX-License-Identifier: Apache-2.0
+
 @echo off
 SET BINARY_NAME=ai-shell
 SET BUILD_FLAGS=-ldflags="-s -w"
