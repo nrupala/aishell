@@ -1,4 +1,9 @@
 #!/bin/sh
+
+# SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # AI-Native Shell environment setup for Unix / Linux / macOS
 # Verifies llama-cli, creates the models directory, and downloads the
 # Qwen2.5-Coder-3B-Instruct Q4_K_M GGUF asset if it is not already present.
