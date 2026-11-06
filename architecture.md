@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 \# Architectural Specification: AI-Native Cross-Platform Shell Wrapper (Go + llama.cpp)
 
 
