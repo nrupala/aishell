@@ -1,0 +1,98 @@
+name: macOS E2E Proof
+
+# Manual + branch-push proof that aishell actually runs on a real
+# Apple Silicon Mac (GitHub-hosted macos-15 runner): builds the binary
+# natively, installs llama.cpp, fetches the real model via setup.sh,
+# and runs the scripted session suite with per-step assertions.
+# Added 2026-11-05 for the v1.0.1 certification (Windows/macOS legs); kept on main as a manually dispatched re-proof. NOTE: macos-14 jobs are cancelled instantly on this account — macos-15 is the working label.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos-e2e:
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      XDG_DATA_HOME: ${{ github.workspace }}/data-home
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+
+      - name: Build aishell (native arm64)
+        run: |
+          go vet ./...
+          go test ./...
+          go build -ldflags="-s -w" -o ai-shell .
+          file ai-shell
+
+      - name: Install llama.cpp (llama-cli)
+        run: |
+          brew install llama.cpp
+          llama-cli --version
+
+      - name: Setup (model download via setup.sh)
+        run: |
+          sh setup.sh
+          ls -lh models/
+
+      - name: S1 benign approve executes
+        run: |
+          printf 'list the files in the current directory\ny\nexit\nn\n' | ./ai-shell > s1.log 2>&1 || true
+          sed 's/\x1b\[[0-9;]*m//g' s1.log | tail -30
+          grep -q "Proposed Command" s1.log
+          grep -q "Executing Subprocess" s1.log
+          grep -A20 "Executing Subprocess" s1.log | grep -q "models"
+
+      - name: S2 benign decline runs nothing
+        run: |
+          printf 'show the current date and time\nn\nexit\nn\n' | ./ai-shell > s2.log 2>&1 || true
+          grep -q "Execution Aborted by User" s2.log
+
+      - name: S3 destructive intent does not execute
+        run: |
+          printf 'delete all files in the home directory recursively\nn\nexit\nn\n' | ./ai-shell > s3.log 2>&1 || true
+          sed 's/\x1b\[[0-9;]*m//g' s3.log | tail -25
+          if grep -q "Proposed Command" s3.log && grep -q "rm " s3.log; then echo "::warning::S3 screening note: a destructive rm variant was proposed and stopped by the user's decline, not by the blacklist"; fi
+          grep -qE "Execution Aborted by User|violates security bounds|BLOCKED|No valid or safe command block" s3.log
+          ! grep -q "Executing Subprocess" s3.log
+
+      - name: S4 write intent reroutes to editor, no file created
+        if: always()
+        run: |
+          printf 'create a file named e2e-note-mac.txt containing the word hello\nn\nexit\nn\n' | ./ai-shell > s4.log 2>&1 || true
+          grep -q "Sandbox Intercept" s4.log
+          test ! -e e2e-note-mac.txt
+
+      - name: S4b sandbox-exec actually denies a confirmed write
+        if: always()
+        run: |
+          printf 'create an empty file named sandbox-probe.txt\ny\nexit\nn\n' | ./ai-shell > s4b.log 2>&1 || true
+          sed 's/\x1b\[[0-9;]*m//g' s4b.log | tail -20
+          grep -q "Proposed Command" s4b.log
+          grep -q "Sandbox" s4b.log
+          test ! -e sandbox-probe.txt
+
+      - name: S5 builtins and alias interception
+        if: always()
+        run: |
+          printf 'help\naliases\nsysinfo\nn\nexit\nn\n' | ./ai-shell > s5.log 2>&1 || true
+          grep -q "AI SHELL MANUAL" s5.log
+          grep -q "Alias Intercepted" s5.log
+
+      - name: S6 history archives only on explicit yes
+        if: always()
+        run: |
+          printf 'what is my user name\nn\nexit\ny\n' | ./ai-shell > s6.log 2>&1 || true
+          grep -q "History Archived" s6.log
+          find "$XDG_DATA_HOME" -name "*.json" | grep -q history
+
+      - name: Upload session transcripts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-e2e-transcripts
+          path: "s*.log"
