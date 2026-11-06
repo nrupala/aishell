@@ -22,7 +22,7 @@ Built-in extras: `help`, `aliases` (pre-baked shortcuts like `sysinfo`, `netstat
 ## Requirements
 
 - Go 1.21 or newer (to build)
-- `llama-cli` from [llama.cpp](https://github.com/ggml-org/llama.cpp), in your PATH (or in the project folder — see `main.go`). aishell drives it with `--single-turn` only, which works on both current llama.cpp releases and the 2025 builds (see CHANGELOG 1.0.3 for why no other conversation flags are passed).
+- `llama-cli` from [llama.cpp](https://github.com/ggml-org/llama.cpp), in your PATH (or in the project folder — see `main.go`). aishell passes it only the long-stable core flags (`-m`, `-c`, `-n`, `--temp`, `-p`) and enforces one-shot behaviour itself, in its own process management — it does not depend on llama-cli's conversation flags at all, because upstream keeps removing them (see CHANGELOG 1.0.4).
 - The model file, in `./models/` with exactly this name:
   `qwen2.5-coder-3b-instruct-q4_k_m.gguf`
   (Qwen2.5-Coder-3B-Instruct, Q4_K_M, ~1.9 GB — the setup scripts fetch it from Hugging Face under the right name. On a modest CPU each request reloads the model, so expect seconds-to-minutes per request rather than interactive-chat speed.)
