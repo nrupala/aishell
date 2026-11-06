@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 \## 🛠️ Cross-Platform Build \& Compilation Checklist
 
 Since Go supports out-of-the-box cross-compilation without heavy toolchains, you can build native execution targets for your target environments using these command combinations: \[2, 3] 
