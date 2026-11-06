@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 Here is your comprehensive Getting Started \& Operational User Guide to deploy and run your completely container-free, AI-native shell wrapper with native Linux and macOS kernel isolation.
 
 To complete your asset bundle, this guide also includes a one-click Native Installer Script (install.sh) that hooks the application into your global terminal profiles.
