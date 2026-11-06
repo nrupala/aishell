@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Privacy — aishell
 
 Copyright © 2026 2351485 ALBERTA INC.
