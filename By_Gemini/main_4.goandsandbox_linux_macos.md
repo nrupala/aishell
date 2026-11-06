@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 Here is your file: main.go.
 
 This downloadable configuration embeds kernel-level OS sandboxing directly into the Go execution engine. It bypasses any reliance on third-party software container daemons, instead utilizing systemd-run user scopes on Linux and Apple Seatbelt Security Profiles via sandbox-exec on macOS.
