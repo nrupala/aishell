@@ -1,5 +1,12 @@
 # Changelog — aishell
 
+## 1.0.3 — the one-shot flag that survives (2026-11-05, certification proofs, supersedes 1.0.2)
+
+The 1.0.2 fix was itself overtaken within hours: the newest llama.cpp builds (Homebrew on macOS, the MSVC dev build on Windows) removed the conversation toggle entirely, so `--no-conversation` is now rejected the same way `-no-cnv` was. Both certification proofs hit `error: invalid argument: --no-conversation` on every inference.
+
+- Inference now passes **only** `--single-turn --no-display-prompt` as one-shot controls. `--single-turn` (generate one turn, then exit) exists with the same semantics in every build checked: the Aetheris proof build (bb4caa7, verified by direct invocation), ggml-org b8417, and the newest Homebrew/MSVC builds (verified from their own `--help` and by the re-run proofs).
+- The argument-pinning test now also forbids both conversation toggles, so a future "helpful" flag addition fails the suite instead of failing users.
+
 ## 1.0.2 — cross-platform llama-cli flag fix (2026-11-05, certification proofs)
 
 Found by the macOS CI proof (a real Apple Silicon runner, Homebrew llama.cpp): newer llama.cpp builds removed the short `-no-cnv` alias, so every inference failed with `error: invalid argument: -no-cnv` on a current `llama-cli`. The Linux proof build (bb4caa7) still accepted the short form, which is why this only surfaced on macOS.
