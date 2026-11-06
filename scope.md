@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 \# Project Scope Document: AI-Native Shell Interface
 
 \## Version 1.1 — Powered by llama.cpp
