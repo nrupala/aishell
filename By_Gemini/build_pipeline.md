@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 I have selected Qwen2.5-Coder-3B-Instruct as the definitive model for this application. It provides the perfect balance: it is small enough (under 2.5 GB) to run with blistering speed on standard laptop CPUs or mobile device memory, yet highly specialized in accurately mapping out complex system differences between PowerShell, Windows CMD, and Unix/Linux Bash.
 
 The complete, cross-platform architecture is fully locked in. The project directory structure, source codes, configuration pipelines, and sandbox security parameters are completely prepared for deployment.
