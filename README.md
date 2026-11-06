@@ -1,5 +1,7 @@
 # aishell — an AI-native shell that never runs anything behind your back
 
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16393/badge)](https://www.bestpractices.dev/en/projects/16393)
+
 Copyright © 2026 2351485 ALBERTA INC.
 
 Type what you want in plain language. aishell turns it into a clean command for your operating system, shows it to you, and runs it **only if you say yes**.
