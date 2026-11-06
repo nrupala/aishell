@@ -7,6 +7,8 @@ SPDX-License-Identifier: Apache-2.0
 # aishell — an AI-native shell that never runs anything behind your back
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16393/badge)](https://www.bestpractices.dev/en/projects/16393)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nrupala/aishell/badge)](https://scorecard.dev/viewer/?uri=github.com/nrupala/aishell)
+[![REUSE status](https://api.reuse.software/badge/github.com/nrupala/aishell)](https://api.reuse.software/info/github.com/nrupala/aishell)
 
 Copyright © 2026 2351485 ALBERTA INC.
 
