@@ -1,0 +1,10 @@
+version = 1
+
+# Built binaries shipped in dist/ — built from this repository's Apache-2.0
+# sources by the project's own build; declared here because binaries cannot
+# carry SPDX headers.
+[[annotations]]
+path = "dist/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 2351485 ALBERTA INC."
+SPDX-License-Identifier = "Apache-2.0"
