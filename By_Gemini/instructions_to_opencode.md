@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 Hey OpenCode, you are compiling a highly optimized, cross-platform, AI-native shell wrapper written in Go. The goal is to build this with absolute structural hygiene. 
 
 
