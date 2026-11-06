@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 2351485 ALBERTA INC.
+
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Changelog — aishell
 
 ## 1.0.4 — one-shot behaviour lives in aishell now (2026-11-05, supersedes 1.0.3)
