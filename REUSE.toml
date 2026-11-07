@@ -8,3 +8,14 @@ path = "dist/**"
 precedence = "override"
 SPDX-FileCopyrightText = "2026 2351485 ALBERTA INC."
 SPDX-License-Identifier = "Apache-2.0"
+
+# Brand icons — hand-authored house marks created 2026-11-06; declared here
+# because the PNG cannot carry SPDX headers.
+[[annotations]]
+path = [
+    "assets/icon.svg",
+    "assets/icon-512.png",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 2351485 ALBERTA INC."
+SPDX-License-Identifier = "Apache-2.0"
