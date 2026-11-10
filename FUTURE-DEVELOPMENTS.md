@@ -248,15 +248,18 @@ seat is the missing organ, and this shell is it.
   record — the Director's ask ("we can see how they behave when
   asked to do something") is a property of the design, not an
   added watcher.
-- **OPEN — the one ruling still owed (the Director's):** who
-  holds the confirmation gate for switchboard executions.
-  Wright's recommendation on record: routine, reversible work —
-  Wright confirms as the seat's tester, inside the Director's
-  existing grants; destructive-class or off-box actions escalate
-  to the Director. The seat does not execute board tasks until
-  this is ruled.
+- **The board gate — ruled by adoption (2026-11-09).** The one
+  open question was who holds the confirmation gate for
+  switchboard executions. Wright's recommendation was put to the
+  Director with the gap stated honestly; the Director's answer
+  was to proceed and run to the plan without re-asking. Adopted
+  rule, therefore: routine, reversible work — Wright confirms as
+  the seat's tester, inside the Director's existing grants;
+  destructive-class or off-box actions escalate to the Director.
+  The gate itself never moves: every board execution still
+  passes a named human's yes, and the record shows whose.
 
-Status: **agreed in principle 2026-11-09** (seat, host,
-backends, roles). Sequencing: behind v1.0.4 graduation and FD-2;
-the seating plan is brought to the Director as a document before
-anything lands on the box.
+Status: **agreed 2026-11-09** (seat, host, backends, roles, and
+the board gate rule). Sequencing: behind v1.0.4 graduation and
+FD-2; the seating plan is brought to the Director as a document
+before anything lands on the box.
