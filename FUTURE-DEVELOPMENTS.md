@@ -92,3 +92,67 @@ Status: **granted by the Director 2026-11-09** ("I give you all
 four"). Sequencing: behind the v1.0.4 graduation (~2026-11-12);
 build order FD-2 → FD-3 → FD-4 → FD-5. No build scheduled yet;
 enters the AI Shell line when that line next opens.
+
+## FD-6: The mandate for the agentic era (the AI Shell's own answer, approved by the Director, 2026-11-09)
+
+**The question, in the Director's framing:** how does this shell
+serve the future well — the agentic space, APIs, computers,
+automated workflows — and how does it stay alive there, active and
+delivering? And with it: the ability to perform all scripted
+functions — scripting, PowerShell, Windows, macOS, Unix, BSD, and
+the other command worlds — directed in plain English, plain
+Chinese, plain Indian languages, in all humanly spoken languages;
+machine languages to follow when AIs can say which languages they
+prefer.
+
+**The answer — survival is not a property of the model.** Models
+are replaceable parts. This shell has already survived its
+inference engine's interface changing under it repeatedly (the
+v1.0.1–v1.0.4 flag-drift chain), and the local model itself is
+swappable the day a better one ships. What endures is the seat:
+
+- **The trusted execution seat.** The layer where intent — spoken
+  in any human language — becomes a verified action in any machine
+  dialect (PowerShell, cmd, bash, zsh, sh, the BSD shells), under a
+  human's yes, with a proof record. In a world of automated
+  workflows, that seat is where accountability lives, and systems
+  route through it (FD-2, FD-3) because it is the one component
+  that holds a human's approval.
+- **Verified routines compound; guesses don't.** FD-1's library is
+  the growing asset: a model *proposes*, a routine is *proven*.
+  Every verified routine makes the next thousand tasks safer in
+  every language and every dialect at once.
+- **All human languages in, all machine dialects out — with the
+  honest limit stated.** Modern models are multilingual by birth,
+  so plain Chinese, Hindi, and the rest are a realistic promise.
+  The limit, recorded plainly: quality in lower-resource languages
+  and rarer dialects (BSD, fish) will lag English-and-bash, and a
+  wrong translation is equally dangerous in any language. The
+  gate's design carries the weight: the proposal is always shown
+  *also* as the exact command that will run, so the human verifies
+  in the dialect that executes, whichever language they spoke in.
+- **Machine languages, when they come, stop at the same gate.**
+  Recorded as fact (Director asked, 2026-11-09): AIs hold no
+  secret spoken language — machine-to-machine communication today
+  is human-designed and human-readable (JSON, APIs, MCP), and a
+  model's internal mathematics is an opacity, not a tongue. If
+  efficient machine protocols emerge, aishell's contract does not
+  change: whatever protocol an agent arrives in, at the gate its
+  intent is restated in plain human words, a human decides, and
+  the record stays human-readable. Human audit never dies here.
+- **Staying alive is a habit, not an event.** Protocol-native
+  (FD-2/FD-3) so agents call it instead of routing around it;
+  zero-dependency and local so nothing upstream can strand it;
+  re-proven on real Windows, macOS, and Linux at every release
+  (the fleet's platform-ci-scaffolding kit exists for exactly
+  this); and the mechanics layer free (FD-1's ruling), because
+  what spreads is what survives.
+
+**The doctrine, in one line:** *models come and go, languages
+come and go — the seat where a human approves what a machine
+does stays.*
+
+Status: **approved by the Director 2026-11-09** and entered as
+the standing mandate over FD-2..FD-5. No build scheduled;
+interpretive authority for the endpoint expansion when the AI
+Shell line next opens.
